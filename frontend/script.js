@@ -1,7 +1,7 @@
 const tg = window.Telegram.WebApp;
 tg.expand();  // Розгортає WebApp на весь екран
 
-const backendUrl = "https://fedf-194-44-82-106.ngrok-free.app/"; // Замінити на твій бекенд
+const backendUrl = "https://1e74-194-44-82-106.ngrok-free.app/miniapp"; // Замінити на твій бекенд
 
 // Отримуємо user_id з initData (перевіряємо підписаний токен)
 let userData = new URLSearchParams(tg.initData);

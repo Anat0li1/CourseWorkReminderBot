@@ -6,7 +6,7 @@ services:
       dockerfile: Dockerfile.bot
     environment:
       - BOT_TOKEN=8105274983:AAHgLSoRh1LLEy5vA_2WsPGpTDLLau7shs0
-      - BACKEND_URL=https://fedf-194-44-82-106.ngrok-free.app/
+      - BACKEND_URL=https://1e74-194-44-82-106.ngrok-free.app
     depends_on:
       - backend
 

@@ -11,21 +11,26 @@
 
 <body>
     <h2>Редагування нагадування</h2>
+    <br />
     <label>Дата нагадування:</label>
+    <br />
     <input type="datetime-local" id="reminder-date">
-
+    <br />
     <div id="repeat-container" style="display: none;">
         <label>Повторюваність:</label>
+        <br />
         <select id="repeat">
             <option value="none">Без повтору</option>
             <option value="daily">Щоденно</option>
             <option value="weekly">Щотижня</option>
         </select>
+        <br />
     </div>
-
+    <br/>
     <label>Опис:</label>
+    <br />
     <textarea id="description"></textarea>
-
+    <br />
     <button id="save-btn">Зберегти</button>
     <script src="script.js"></script>
 </body>

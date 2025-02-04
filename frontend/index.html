@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редагування нагадування</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <h2>Редагування нагадування</h2>
+    <label>Дата нагадування:</label>
+    <input type="datetime-local" id="reminder-date">
+
+    <div id="repeat-container" style="display: none;">
+        <label>Повторюваність:</label>
+        <select id="repeat">
+            <option value="none">Без повтору</option>
+            <option value="daily">Щоденно</option>
+            <option value="weekly">Щотижня</option>
+        </select>
+    </div>
+
+    <label>Опис:</label>
+    <textarea id="description"></textarea>
+
+    <button id="save-btn">Зберегти</button>
+    <script src="script.js"></script>
+</body>
+
+</html>

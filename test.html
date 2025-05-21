@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Створити подію</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f7f9fc;
+    padding: 20px;
+  }
+  .form-container {
+    max-width: 800px;
+    margin: auto;
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  }
+  h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .form-group {
+    margin-bottom: 15px;
+  }
+  label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 6px;
+  }
+  input[type="text"],
+  input[type="datetime-local"],
+  input[type="number"],
+  input[type="date"],
+  select,
+  textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    margin-top: 5px;
+  }
+  textarea {
+    resize: vertical;
+    height: 80px;
+  }
+  .hidden {
+    display: none;
+  }
+  .section {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #ddd;
+  }
+  .reminder-block {
+    margin-top: 10px;
+    padding: 10px;
+    background: #eef2f7;
+    border-radius: 8px;
+  }
+  .reminder-item {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  button {
+    display: block;
+    width: 100%;
+    background: #4caf50;
+    color: white;
+    border: none;
+    padding: 12px;
+    margin-top: 20px;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  button:hover {
+    background: #45a049;
+  }
+</style>
+</head>
+<body>
+
+<div class="form-container">
+  <h2>Створити подію</h2>
+
+  <form id="eventForm">
+
+    <!-- Подія -->
+    <div class="form-group">
+      <label for="name">Назва події</label>
+      <input type="text" id="name" maxlength="50" required>
+    </div>
+
+    <div class="form-group">
+      <label for="description">Опис події</label>
+      <textarea id="description" maxlength="300"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="start">Початок</label>
+      <input type="datetime-local" id="start" required>
+    </div>
+
+    <div class="form-group">
+      <label for="end">Завершення</label>
+      <input type="datetime-local" id="end" required>
+    </div>
+
+    <!-- Повторення -->
+    <div class="section">
+      <h3>Повторення</h3>
+
+      <div class="form-group">
+        <label for="repeatType">Повторюваність</label>
+        <select id="repeatType">
+          <option value="1">Не повторювати</option>
+          <option value="2">Робочі дні</option>
+          <option value="3">Кожен день</option>
+          <option value="4">Кожен тиждень</option>
+          <option value="5">Кожен місяць</option>
+          <option value="6">Кожен рік</option>
+          <option value="7">Кастомний</option>
+        </select>
+      </div>
+
+      <div id="customRepeatFields" class="hidden">
+        <div class="form-group">
+          <label for="startRepeat">Дата початку повторень</label>
+          <input type="date" id="startRepeat">
+        </div>
+
+        <div class="form-group">
+          <label>Частота повторення</label>
+          <div class="reminder-item">
+            <input type="number" id="repeatDuration" min="1">
+            <select id="repeatIndicator">
+              <option value="1">День</option>
+              <option value="2">Тиждень</option>
+              <option value="3">Місяць</option>
+              <option value="4">Рік</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="endRepeat">Дата закінчення повторень</label>
+          <input type="date" id="endRepeat">
+        </div>
+      </div>
+    </div>
+
+    <!-- Нагадування -->
+    <div class="section">
+      <h3>Нагадування</h3>
+
+      <div class="form-group">
+        <label for="reminderCount">Кількість нагадувань</label>
+        <select id="reminderCount">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+        </select>
+      </div>
+
+      <div id="remindersContainer" class="reminder-block">
+        <!-- Сюди підставлятимуться поля нагадувань -->
+      </div>
+
+      <div class="form-group checkbox-group">
+        <input type="checkbox" id="remindEndCheckbox">
+        <label for="remindEndCheckbox">Нагадати про завершення події</label>
+      </div>
+
+      <div id="remindEndContainer" class="hidden reminder-block">
+        <div class="reminder-item">
+          <input type="number" id="remindEndBefore" min="1">
+          <select id="remindEndIndicator">
+            <option value="1">Хвилина</option>
+            <option value="2">Година</option>
+            <option value="3">День</option>
+            <option value="4">Тиждень</option>
+            <option value="5">Місяць</option>
+            <option value="6">Рік</option>
+          </select>
+        </div>
+      </div>
+
+    </div>
+
+    <button type="submit">Зберегти подію</button>
+
+  </form>
+</div>
+
+<script>
+  const repeatType = document.getElementById('repeatType');
+  const customRepeatFields = document.getElementById('customRepeatFields');
+  const reminderCount = document.getElementById('reminderCount');
+  const remindersContainer = document.getElementById('remindersContainer');
+  const remindEndCheckbox = document.getElementById('remindEndCheckbox');
+  const remindEndContainer = document.getElementById('remindEndContainer');
+
+  repeatType.addEventListener('change', () => {
+    customRepeatFields.classList.toggle('hidden', repeatType.value !== '7');
+  });
+
+  reminderCount.addEventListener('change', updateReminders);
+
+  remindEndCheckbox.addEventListener('change', () => {
+    remindEndContainer.classList.toggle('hidden', !remindEndCheckbox.checked);
+  });
+
+  function updateReminders() {
+    remindersContainer.innerHTML = '';
+    const count = parseInt(reminderCount.value);
+    for (let i = 0; i < count; i++) {
+      const reminderDiv = document.createElement('div');
+      reminderDiv.className = 'reminder-item';
+      reminderDiv.innerHTML = `
+        <input type="number" min="1" name="remind_before_${i}">
+        <select name="remind_indicator_${i}">
+          <option value="1">Хвилина</option>
+          <option value="2">Година</option>
+          <option value="3">День</option>
+          <option value="4">Тиждень</option>
+          <option value="5">Місяць</option>
+          <option value="6">Рік</option>
+        </select>
+      `;
+      remindersContainer.appendChild(reminderDiv);
+    }
+  }
+
+  // Ініціалізуємо одразу на старті
+  updateReminders();
+</script>
+
+</body>
+</html>

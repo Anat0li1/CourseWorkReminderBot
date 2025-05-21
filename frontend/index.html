@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Редагування нагадування</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="script.js"></script>
-    <link rel="stylesheet" href="styles.css">
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 
 <body>
@@ -24,7 +24,7 @@
 
             <div class="form-group">
                 <label for="description">Опис події</label>
-                <textarea id="description" maxlength="300"></textarea>
+                <textarea id="description" maxlength="300" required></textarea>
             </div>
 
             <div class="form-group">
@@ -37,7 +37,6 @@
                 <input type="datetime-local" id="end" required>
             </div>
 
-            <!-- Повторення -->
             <div class="section">
                 <h3>Повторення</h3>
 
@@ -57,13 +56,13 @@
                 <div id="customRepeatFields" class="hidden">
                     <div class="form-group">
                         <label for="startRepeat">Дата початку повторень</label>
-                        <input type="date" id="startRepeat">
+                        <input type="date" id="startRepeat" name="startRepeat">
                     </div>
 
                     <div class="form-group">
                         <label>Частота повторення</label>
                         <div class="reminder-item">
-                            <input type="number" id="repeatDuration" min="1">
+                            <input type="number" id="repeatDuration" name="repeatDuration" min="1" max="50">
                             <select id="repeatIndicator">
                                 <option value="1">День</option>
                                 <option value="2">Тиждень</option>
@@ -74,11 +73,12 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="endRepeat">Дата закінчення повторень</label>
+                        <label for="endRepeat" name="endRepeat">Дата закінчення повторень</label>
                         <input type="date" id="endRepeat">
                     </div>
                 </div>
             </div>
+
             <div class="section">
                 <h3>Нагадування</h3>
 
@@ -102,7 +102,7 @@
 
                 <div id="remindEndContainer" class="hidden reminder-block">
                     <div class="reminder-item">
-                        <input type="number" id="remindEndBefore" min="1">
+                        <input type="number" id="remindEndBefore" name="remindEndBefore" min="1" max="50">
                         <select id="remindEndIndicator">
                             <option value="1">Хвилина</option>
                             <option value="2">Година</option>
@@ -120,4 +120,5 @@
 
         </form>
     </div>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>

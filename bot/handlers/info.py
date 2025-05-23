@@ -1,6 +1,6 @@
 from aiogram import Router, types
 from aiogram.filters import Command
-from bot.phrases import INTRODUCTION
+from bot.utils.phrases import INTRODUCTION
 
 router = Router()
 

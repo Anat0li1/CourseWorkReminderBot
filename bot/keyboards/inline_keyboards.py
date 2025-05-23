@@ -31,7 +31,7 @@ def add_reminding_keyboard(web_app_url:str) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(inline_keyboard=[
         [
             InlineKeyboardButton(text="✅ Додати", web_app=WebAppInfo(url=f"{web_app_url}/miniapp")),
-            InlineKeyboardButton(text="❌ Скасувати", callback_data="cancel_add_remindings")
+            InlineKeyboardButton(text="❌ Скасувати", callback_data="add_remind_cancel")
         ]
     ])
 
@@ -51,8 +51,8 @@ def get_day_plan_keyboard(current_date: date) -> InlineKeyboardMarkup:
         inline_keyboard=[
             [
                 InlineKeyboardButton(text="⬅️", callback_data=f"day_plan:{prev_date.isoformat()}"),
-                InlineKeyboardButton(text=current_date.strftime("%d.%m.%Y"), callback_data="noop"),
-                InlineKeyboardButton(text="➡️", callback_data=f"day_plan:{next_date.isoformat()}"),
+                # InlineKeyboardButton(text=current_date.strftime("%d.%m.%Y"), callback_data="noop"),
+                InlineKeyboardButton(text="➡️", callback_data=f"day_plan:{next_date.isoformat()}")
             ]
         ]
     )

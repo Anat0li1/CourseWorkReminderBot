@@ -5,16 +5,15 @@ import asyncio
 
 async def run(bot: Bot):
     while True:
+        print(f"Iteration: {datetime.now()}")
         now = datetime.now()
-        end = now + timedelta(minutes=5)
+        end = now + timedelta(minutes=1)
         reminders = await get_events_by_period(now, end)
+        print(f"Reminders: {reminders}")
         for rem in reminders:
             try:
-                await bot.send_message(rem.user_tg_id, f"🔔 Нагадування: {rem.text}")
-                next_rem = get_next_rem(rem)
-                if next_rem:
-                    rem.next_rem = next_rem
-                    await update_reminding(rem)
+                await bot.send_message(rem[0].user_id, f"🔔 Нагадування: {rem[0].description}")
+                await update_reminding_after_sending(rem[1])
             except Exception as e:
                 print(f"[Reminder Error] {e}")
 

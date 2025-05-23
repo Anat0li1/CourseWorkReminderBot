@@ -5,5 +5,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY backend/ .
 COPY db/ /app/db/  
 COPY frontend/ /app/frontend/
+COPY bot/ /app/bot/
 ENV PYTHONPATH=/app
 CMD ["python", "server.py"]

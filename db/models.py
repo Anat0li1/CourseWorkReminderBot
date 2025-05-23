@@ -30,7 +30,7 @@ class User(Base):
 class Event(Base):
     __tablename__ = "event"
     id: Mapped[int] = mapped_column(primary_key=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.tg_id", ondelete="CASCADE"))
     name: Mapped[str] = mapped_column(String(50))
     description: Mapped[str] = mapped_column(String(300), nullable=True)
     start_time: Mapped[DateTime] = mapped_column(DateTime(timezone=True), nullable=False)

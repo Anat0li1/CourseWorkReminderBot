@@ -10,12 +10,10 @@ router = Router()
 BACKEND_URL = getenv("BACKEND_URL")
 
 @router.message(Command("add_remindings"))
-@router.message(F.text == "📝 Додати нову подію")
+@router.message(F.text == "Додати нову подію")
 async def add_remindings_command(message: Message):
     keyboard = add_reminding_keyboard(web_app_url=BACKEND_URL)
-
     await message.answer("Додати нагадування?", reply_markup=keyboard)
-    await message.reply("", reply_markup=ReplyKeyboardRemove())
 
 @router.callback_query(F.data == "add_remind_cancel")
 async def cancel_add_reminding(callback: CallbackQuery):

@@ -9,7 +9,7 @@ from db.requests import delete_all_users_events_and_remindings
 router = Router()
 
 @router.message(Command("delete_all"))
-@router.message(F.text == "🗑️ Видалити всі події")
+@router.message(F.text == "Видалити всі події")
 async def confirm_delete_all(message: Message):
     kb = delete_all_keyboard()
     await message.answer("Ви точно хочете видалити всі ваші події та нагадування?", reply_markup=kb)

@@ -68,52 +68,39 @@
 
 import asyncio
 import datetime
-from db.requests import save_event_with_reminders
+from db.requests import save_event_with_reminders, get_user_events_by_date
 from db.models import Event, Reminding, async_session  # твоя async session
+from datetime import datetime, timedelta
 
 async def main():
-    user_id = 1
-    now = datetime.datetime.now(datetime.timezone.utc)
+    # user_id = 1
+    # # now = datetime.now(datetime.timezone.utc)
 
-    event_data = {
-        "name": "Тестова подія",
-        "description": "Опис події для ручного тесту",
-        "start": (now + datetime.timedelta(minutes=15)).isoformat(),
-        "end": (now + datetime.timedelta(minutes=45)).isoformat(),
-        "repeat_type": 0,
-        "start_repeat": None,
-        "repeat_indicator": None,
-        "repeat_duration": None,
-        "end_repeat": None
-    }
+    # event_data = {
+    #     "name": "Тестова подія",
+    #     "description": "Опис події для ручного тесту",
+    #     "start": (now + datetime.timedelta(minutes=15)).isoformat(),
+    #     "end": (now + datetime.timedelta(minutes=45)).isoformat(),
+    #     "repeat_type": 0,
+    #     "start_repeat": None,
+    #     "repeat_indicator": None,
+    #     "repeat_duration": None,
+    #     "end_repeat": None
+    # }
 
-    remindings = [
-        {"remind_before": 10, "remind_indicator": 1}, 
-        {"remind_before": 1, "remind_indicator": 3}    
-    ]
+    # remindings = [
+    #     {"remind_before": 10, "remind_indicator": 1}, 
+    #     {"remind_before": 1, "remind_indicator": 3}    
+    # ]
 
-    remind_end = {
-        "remind_before": 5,
-        "remind_indicator": 1
-    }
+    # remind_end = {
+    #     "remind_before": 5,
+    #     "remind_indicator": 1
+    # }
 
-    try:
-        event_id = await save_event_with_reminders(user_id, event_data, remindings, remind_end)
-        print(f"[✅] Event saved successfully with ID: {event_id}")
+    result = await get_user_events_by_date(1081733675, datetime.now() + timedelta(days=1))
+    print(result)
 
-        async with async_session() as session:
-            event = await session.get(Event, event_id)
-            print(f"Event:\n  Name: {event.name}\n  Start: {event.start_time}\n  End: {event.end_time}")
-
-            reminders = (
-                await session.execute(Reminding.__table__.select().where(Reminding.event_id == event_id))
-            ).fetchall()
-            print(f"\nReminders ({len(reminders)}):")
-            for rem in reminders:
-                print(f"  - Before: {rem.remind_before} {rem.remind_indicator}, At: {rem.next_rem}, End Reminder: {rem.remind_end}")
-
-    except Exception as e:
-        print(f"[❌] Error during save: {e}")
 
 if __name__ == "__main__":
     asyncio.run(main())

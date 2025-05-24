@@ -19,6 +19,7 @@ from bot.keyboards.reply_keyboard import main_menu_keyboard
 from dotenv import load_dotenv
 import os
 import bot.services.reminder as reminder
+from bot.utils.phrases import STARTING
 from db.requests import set_user
 
 load_dotenv()
@@ -43,7 +44,7 @@ async def on_startup(bot: Bot):
 @dp.message(Command("start"))
 async def cmd_start(message:Message):
     await set_user(message.from_user.id, message.from_user.username)
-    await message.answer("Привіт! Обери дію з меню 👇", reply_markup=main_menu_keyboard())
+    await message.answer(STARTING, reply_markup=main_menu_keyboard())
 
 async def main():
     await dp.start_polling(bot)

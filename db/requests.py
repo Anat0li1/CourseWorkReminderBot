@@ -268,11 +268,19 @@ async def update_reminding(reminding_id: int, updated_data: dict):
         await session.execute(update(Reminding).where(Reminding.id == reminding_id).values(**updated_data))
         await session.commit()
 
+async def get_event_by_remind_id(reminding_id:int):
+    async with async_session() as session:
+        result = await session.execute(select(Event).join(Reminding).where(Reminding.id == reminding_id))
+    return result.all()
+
 async def update_reminding_after_sending(reminding: Reminding):
-    # next_rem = get_next_rem(reminding)
-    event = reminding.event
+    event = (await get_event_by_remind_id(reminding.id))[0][0]
+    print(event)
+    next_rem = reminding.next_rem
+    print(next_rem)
     try:
         next_rem = shift_next_rem_if_reapeatable(next_rem, event)
+        print(next_rem)
     except Exception:
         delete_reminding(reminding.id)
     change = {"next_rem": next_rem}
@@ -288,7 +296,6 @@ async def get_user_events_with_remindings(user_id: int):
     async with async_session() as session:
         stmt = select(Event).options(selectinload(Event.remindings)).where(Event.user_id == user_id)
         result = await session.scalars(stmt)
-        
         events = list(result)
         events.sort(key=lambda e: e.remindings[0].next_rem if e.remindings else datetime.max)
         return events
@@ -308,8 +315,35 @@ async def get_events_by_period(start_date: datetime, end_date: datetime):
 
 async def get_event_by_id(event_id:int):
     async with async_session() as session:
-        result = await session.execute(select(Event, Reminding).join(Reminding).where(Event.id == event_id))
-    return result.all()
+        stmt = select(Event).options(selectinload(Event.remindings)).where(Event.id == event_id)
+        event = await session.scalar(stmt)
+
+        if not event:
+            return None
+
+        return {
+            "id": event.id,
+            "name": event.name,
+            "description": event.description,
+            "start_time": event.start_time.strftime('%Y-%m-%dT%H:%M'),
+            "end_time": event.end_time.strftime('%Y-%m-%dT%H:%M'),
+            "repeat": {
+                "type": event.repeat_type,
+                "start": event.start_repeat.strftime('%Y-%m-%d') if event.start_repeat else None,
+                "duration": event.repeat_duration,
+                "indicator": event.repeat_indicator,
+                "end": event.end_repeat.strftime('%Y-%m-%d') if event.end_repeat else None
+            },
+            "reminders": [
+                {
+                    "before": reminder.remind_before,
+                    "indicator": reminder.remind_indicator,
+                    "remindEnd": reminder.remind_end
+                }
+                for reminder in event.remindings
+            ]
+        }
+
 
 # async def get_user_events_by_date(user_id: int, date: datetime):
 #     async with async_session() as session:
@@ -360,5 +394,4 @@ async def get_user_events_by_date(user_id: int, date: datetime):
                 event_copy.start_time = part_start
                 event_copy.end_time = part_end
                 daily_events.append(event_copy)
-
         return sorted(daily_events, key=lambda e: e.start_time)

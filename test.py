@@ -1,23 +1,26 @@
-# from datetime import datetime, timedelta, date
-# import asyncio
+from datetime import datetime, timedelta, date
+import asyncio
 
-# # Тестові імпорти моделей
-# from db.models import User, Event, Reminding, async_session  # або ім'я сесії
+# Тестові імпорти моделей
+from db.models import User, Event, Reminding, async_session  # або ім'я сесії
 
-# # Тестові імпортовані функції
-# from db.requests import (
-#     add_event,
-#     add_event_by_params,
-#     add_reminding,
-#     add_reminding_by_params,
-#     add_event_with_remindings,
-#     update_event, 
-#     update_reminding,
-#     get_user_events_with_remindings,
-#     get_user_events_by_date,
-#     delete_all_users_events_and_remindings,
-#     delete_event_and_remindings
-# )
+# Тестові імпортовані функції
+from db.requests import (
+    add_event,
+    add_event_by_params,
+    add_reminding,
+    add_reminding_by_params,
+    add_event_with_remindings,
+    update_event, 
+    update_reminding,
+    get_user_events_with_remindings,
+    get_user_events_by_date,
+    delete_all_users_events_and_remindings,
+    delete_event_and_remindings,
+    update_reminding_after_sending,
+    get_event_by_id,
+    get_user_events_with_remindings
+)
 
 
 
@@ -98,9 +101,9 @@ async def main():
     #     "remind_indicator": 1
     # }
 
-    result = await get_user_events_by_date(1081733675, datetime.now() + timedelta(days=1))
-    print(result)
-
+    result = (await get_user_events_with_remindings(1081733675))[1]
+    rem = result.remindings[0]
+    await update_reminding_after_sending(rem)
 
 if __name__ == "__main__":
     asyncio.run(main())

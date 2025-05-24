@@ -177,7 +177,7 @@ def calculate_timedelta(value, indicator):
     elif indicator == 6:  
         return timedelta(days=value * 365)
     else:
-        raise ValueError("Invalid remind_indicator")
+        raise ValueError(f"Invalid remind_indicator {indicator}")
     
 def validate_event_repeat(event: Event):
     duration_days = (event.end_time - event.start_time).days

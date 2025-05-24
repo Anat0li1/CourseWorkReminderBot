@@ -33,7 +33,7 @@ async def send_event(message_or_cb, events, index):
     builder.row(
         types.InlineKeyboardButton(
             text="✏️ Редагувати",
-            web_app=types.WebAppInfo(url=f"{os.getenv('BACKEND_URL')}/miniapp/{event.id}")
+            web_app=types.WebAppInfo(url=f"{os.getenv('BACKEND_URL')}/miniapp/get_event/{event.id}")
         ),
         types.InlineKeyboardButton(
             text="🗑 Видалити", callback_data=f"event_del:{event.id}:{index}"

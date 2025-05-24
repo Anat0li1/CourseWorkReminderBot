@@ -25,17 +25,38 @@ async def save_all():
         # remind_end = data.get("remind_end")
 
         # event_id = asyncio.run(save_event_with_reminders(1, event_data, remindings, remind_end))
+        print("save all working")
+        print(data)
         await save_event_with_reminders(data.get("userId"), data)
         return jsonify({"status": "ok"}), 201
     except Exception as e:
         print(f"Error: {e}")
         return jsonify({"status": "error", "message": str(e), "type": type(e).__name__}), 500
 
-@app.route("/get_event/<int:event_id>", methods=["GET"])
+@app.route("/miniapp/get_event/<int:event_id>", methods=["GET"])
 async def get_event(event_id):
+    # try:
+    #     event_data = await get_event_by_id(event_id)
+
+    #     if not event_data:
+    #         return render_template("error.html", message="Подію не знайдено"), 404
+
+    #     return render_template("index.html", event=event_data)
+
+    # except Exception as e:
+    #     return render_template("error.html", message=f"Помилка: {str(e)}"), 500
+    return render_template("index.html")
+    
+@app.route("/api/get_event/<int:event_id>", methods=["GET"])
+async def get_event_json(event_id):
     try:
-        event_data = await get_event_by_id(event_id) 
+        event_data = await get_event_by_id(event_id)
+
+        if not event_data:
+            return jsonify({"status": "error", "message": "Подія не знайдена"}), 404
+
         return jsonify(event_data), 200
+
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 

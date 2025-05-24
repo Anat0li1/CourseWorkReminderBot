@@ -12,13 +12,14 @@
     customRepeatFields.classList.toggle('hidden', repeatType.value !== '7');
   });
 
-  reminderCount.addEventListener('change', updateReminders);
+  reminderCount.addEventListener('change', updateRemindersToggle);
 
   remindEndCheckbox.addEventListener('change', () => {
     remindEndContainer.classList.toggle('hidden', !remindEndCheckbox.checked);
   });
 
-  function updateReminders() {
+function updateRemindersToggle() {
+  console.log("q");
     remindersContainer.innerHTML = '';
     const count = parseInt(reminderCount.value);
     for (let i = 0; i < count; i++) {
@@ -38,17 +39,24 @@
       remindersContainer.appendChild(reminderDiv);
     }
 }
-  
+
+function getEventIdFromUrl() {
+  const pathSegments = window.location.pathname.split("/");
+  const eventIndex = pathSegments.indexOf("miniapp") + 2;
+  return pathSegments[eventIndex] || null;
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
   const urlParams = new URLSearchParams(window.location.search);
-  const reminderId = urlParams.get("reminder_id");
+  const eventId = getEventIdFromUrl();
   const submitButton = document.getElementById('submitButton');
-
-  if (reminderId) {
-      await loadEventData(reminderId);
+  updateRemindersToggle();
+  console.log(eventId)
+  if (eventId) {
+      await loadEventData(eventId);
       submitButton.textContent = "Оновити подію";
       submitButton.setAttribute("data-mode", "edit"); 
-      submitButton.setAttribute("data-event-id", reminderId);
+      submitButton.setAttribute("data-event-id", eventId);
   } else {
       submitButton.textContent = "Зберегти подію";
       submitButton.setAttribute("data-mode", "create"); 
@@ -89,8 +97,18 @@ document.getElementById('eventForm')?.addEventListener('submit', async (e) => {
 });
 
 function collectFormData() {
+  const count = parseInt(document.getElementById('reminderCount')?.value ?? '0');
+  const reminderElements = Array.from(document.querySelectorAll('.reminder-item'));
+  const reminders = reminderElements.slice(0, count).map((item, i) => {
+  const beforeEl = document.querySelector(`input[name='remind_before_${i}']`);
+  const indicatorEl = document.querySelector(`select[name='remind_indicator_${i}']`);
   return {
-      userId: userData?.id,
+    before: beforeEl ? parseInt(beforeEl.value || '0') : 0,
+    indicator: indicatorEl ? parseInt(indicatorEl.value || '0') : 0
+  };
+});
+  return {
+      userId: 1081733675,
       name: document.getElementById('name')?.value ?? '',
       description: document.getElementById('description')?.value ?? '',
       start: document.getElementById('start')?.value ?? '',
@@ -102,20 +120,12 @@ function collectFormData() {
           indicator: parseInt(document.getElementById('repeatIndicator')?.value ?? '-1'),
           end: document.getElementById('endRepeat')?.value ?? ''
       },
-      reminders: collectReminders(),
+      reminders,
       remindEnd: document.getElementById('remindEndCheckbox')?.checked ? {
           before: parseInt(document.getElementById('remindEndBefore')?.value ?? '0'),
           indicator: parseInt(document.getElementById('remindEndIndicator')?.value ?? '0')
       } : null
   };
-}
-
-function collectReminders() {
-  const reminderElements = Array.from(document.querySelectorAll('.reminder-item'));
-  return reminderElements.map((item, i) => ({
-      before: parseInt(document.querySelector(`input[name='remind_before_${i}']`)?.value ?? '0'),
-      indicator: parseInt(document.querySelector(`select[name='remind_indicator_${i}']`)?.value ?? '0')
-  }));
 }
 
 // document.getElementById('eventForm')?.addEventListener('submit', async (e) => {
@@ -175,18 +185,33 @@ function collectReminders() {
 //   }
 // });
 
-updateReminders();
+updateRemindersToggle();
+
+function convertToLocalTime(utcDate) {
+  const localDate = new Date(utcDate);
+  const timezoneOffsetMinutes = localDate.getTimezoneOffset();
+  localDate.setMinutes(localDate.getMinutes() - timezoneOffsetMinutes);
+  const year = localDate.getFullYear();
+  const month = String(localDate.getMonth() + 1).padStart(2, '0');
+  const day = String(localDate.getDate()).padStart(2, '0');
+  const hours = String(localDate.getHours()).padStart(2, '0');
+  const minutes = String(localDate.getMinutes()).padStart(2, '0');
+
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
 
 
-async function loadEventData(reminderId) {
+
+async function loadEventData(eventId) {
   try {
-      const response = await fetch(`/get_event/${reminderId}`);
+    const response = await fetch(`/api/get_event/${eventId}`);
+    
       const data = await response.json();
-
+      console.log(data)
       document.getElementById('name').value = data.name;
       document.getElementById('description').value = data.description;
-      document.getElementById('start').value = data.start;
-      document.getElementById('end').value = data.end;
+      document.getElementById('start').value = convertToLocalTime(data.start_time);
+      document.getElementById('end').value = convertToLocalTime(data.end_time);
       document.getElementById('repeatType').value = data.repeat.type;
       
       customRepeatFields.classList.toggle('hidden', data.repeat.type !== 7);
